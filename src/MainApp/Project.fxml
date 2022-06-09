@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <FlowPane>
+            <children>
+                <Label maxHeight="32.0" maxWidth="128.0" minHeight="32.0" minWidth="128.0" prefHeight="32.0" prefWidth="128.0" text=" 球队名称：" />
+                <TextField maxHeight="24.0" maxWidth="256.0" minHeight="24.0" minWidth="256.0" prefHeight="24.0" prefWidth="256.0" />
+            </children>
+        </FlowPane>
+        <FlowPane>
+            <children>
+                <Label maxHeight="32.0" maxWidth="128.0" minHeight="32.0" minWidth="128.0" prefHeight="32.0" prefWidth="128.0" text=" 队员数量：" />
+                <TextField maxHeight="24.0" maxWidth="64.0" minHeight="24.0" minWidth="64.0" prefHeight="24.0" prefWidth="64.0" />
+                <Label maxHeight="32.0" maxWidth="128.0" minHeight="32.0" minWidth="128.0" prefHeight="32.0" prefWidth="128.0" text=" 人" />
+            </children>
+        </FlowPane>
+        <FlowPane>
+            <children>
+                <Label maxHeight="32.0" maxWidth="128.0" minHeight="32.0" minWidth="128.0" prefHeight="32.0" prefWidth="128.0" text=" 地址及端口" />
+                <TextField maxHeight="24.0" maxWidth="192.0" minHeight="24.0" minWidth="192.0" prefHeight="24.0" prefWidth="192.0" />
+                <Label maxHeight="32.0" maxWidth="16.0" minHeight="32.0" minWidth="16.0" prefHeight="32.0" prefWidth="16.0" text=" ：" />
+                <TextField maxHeight="24.0" maxWidth="56.0" minHeight="24.0" minWidth="56.0" prefHeight="24.0" prefWidth="56.0" />
+            </children>
+        </FlowPane>
+        <FlowPane alignment="TOP_RIGHT">
+            <children>
+                <Button maxHeight="32.0" maxWidth="72.0" minHeight="32.0" minWidth="72.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="72.0" text="确定" />
+            </children>
+        </FlowPane>
+    </children>
+</VBox>

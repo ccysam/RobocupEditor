@@ -1,0 +1,56 @@
+Pane #cBtn {
+    -fx-background-color: #FF7777
+}
+
+Pane #cBtn:hover {
+    -fx-background-color: #FFCCCC
+
+}
+
+Pane .TabBtn{
+    -fx-background-color: linear-gradient(rgba(102,204,255,255) 0%,rgba(51,153,204,255) 100%);
+    -fx-font-size: 11;
+    -fx-alignment:top-center;
+    -fx-background-radius: 4 4 0 0;
+    -fx-min-width:48;
+    -fx-border-color: #44aadd;
+    -fx-border-radius: 4 4 0 0;
+}
+
+Pane #lAcc {
+    -fx-background-color: linear-gradient(rgba(102,204,255,255) 0%,rgba(51,153,204,255) 100%);
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+Pane #lAcc TitledPane {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    
+    -fx-animated: true;
+}
+
+Pane #lAcc TitledPane .title {
+    -fx-background-color: #11b4ff00;
+
+}
+
+Pane #Filed{
+    -fx-background-color: #22AA22;
+}
+
+Pane MenuBar:hover{
+    -background-color: #80d3bf;
+}
+
+Pane HBox .StatusBtn{
+    -fx-background-color:linear-gradient(rgba(102,204,255,255) 0%,rgba(51,153,204,255) 100%);
+    -fx-background-radius:24;
+    -fx-border-radius:16;
+}
+
+Pane HBox .StatusBtn:hover{
+    -fx-background-color:linear-gradient(rgba(51,153,204,255) 0%,rgba(102,204,255,255) 100%);
+    -fx-text-fill:#FFFFFF;
+}
+

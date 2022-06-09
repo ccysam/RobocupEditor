@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.effect.BoxBlur?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+
+<Pane fx:controller="MainApp.Controller" prefHeight="900.0" prefWidth="1600.0" style="-fx-background-color: #FFFFFF00; -fx-border-radius: 12px; -fx-background-radius: 12px;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane prefHeight="900.0" prefWidth="1600.0" style="-fx-background-color: #FFFFFFCC; -fx-border-radius: 12px; -fx-background-radius: 12px;">
+         <effect>
+            <BoxBlur />
+         </effect>
+      </Pane>
+      <Pane prefHeight="900.0" prefWidth="1600.0" style="-fx-background-color: #FFFFFF00; -fx-border-radius: 12px; -fx-background-radius: 12px;">
+         <children>
+            <Rectangle arcHeight="24.0" arcWidth="24.0" fill="#b8ffee" height="32.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1600.0" />
+            <Rectangle fill="#b8ffee" height="16.0" layoutY="17.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1600.0" />
+            <Button onAction="#closeWnd" fx:id="CloseBtn" layoutX="1572.0" layoutY="4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0" style="-fx-background-color: #FF8888; -fx-background-radius: 12px;" text="X">
+               <font>
+                  <Font name="System Bold" size="11.0" />
+               </font>
+            </Button>
+            <MenuBar layoutX="9.0" layoutY="5.0" style="-fx-background-color: #b8ffee;">
+               <menus>
+                  <Menu mnemonicParsing="false" text="文件(F)">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="F" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="编辑(E)">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="E" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="帮助(H)">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="F" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </Menu>
+               </menus>
+            </MenuBar>
+            <Label layoutX="721.0" layoutY="8.0" text="Robocup 3D 策略编辑器">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+   </children>
+</Pane>
