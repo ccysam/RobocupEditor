@@ -11,6 +11,9 @@ public class FileUtil {
 
     private File file;
     private List<String> content;
+
+    private int beamBegin, beamEnd, selectSkillBegin, selectSkillEnd;
+
     public String teamName, host;
     public int playerNumber;
     public long port;
@@ -61,8 +64,22 @@ public class FileUtil {
     }
 
     public void getStrategy() {
-        
+        int nowLine;
+        nowLine = 0;
+        for (String string : content) {
+            if ("void NaoBehavior::beam( double& beamX, double& beamY, double& beamAngle ) {".equals(string)) {
+                beamBegin = nowLine;
+            }
+            if ("}".equals(string)) {
+                beamEnd = nowLine;
+            }
+            if ("SkillType NaoBehavior::selectSkill() {".equals(string)) {
+                selectSkillBegin = nowLine;
+            }
+            if ("}".equals(string)) {
+                selectSkillEnd = nowLine;
+            }
+            nowLine++;
+        }
     }
 }
-
-

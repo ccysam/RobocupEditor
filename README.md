@@ -1,18 +1,6 @@
-## Getting Started
+# RobocupEditor
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## What's this
 
-## Folder Structure
+RobocupEditor是一款用于robocup3d仿真足球组的一款可视化设计软件，由作者在设计robocup3d足球队策略时的一个突发奇想产生，目前正在着力于完善基本功能，尽快实现可视化策略的编写；日后将会设计动作优化以及更多高级功能。
 
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
