@@ -1,0 +1,21 @@
+BeforeKickOff           开球前
+KickOff Left            左开球
+KickOff Right           右开球
+Play on                 比赛中
+KickIn Left
+KickIn Right
+corner kick left        左角球
+corner kick right       右角球
+goal kick left          左球门球
+goal kick right         右球门球
+offside left            左越位
+offside right           右越位
+Gameover                比赛结束
+goal left               左进球
+goal right              右进球
+free kick left          左任意球
+free kick right         右任意球
+direct free kick left   左直接任意球
+direct free kick right  右直接任意球
+pass left               左传球
+pass right              右传球

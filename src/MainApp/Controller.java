@@ -1,14 +1,21 @@
 package MainApp;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import Utils.FileUtil;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -17,6 +24,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.TextField;
@@ -25,7 +33,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -39,7 +46,9 @@ public class Controller implements Initializable {
     double sY = Screen.getPrimary().getOutputScaleY();
     double oldStageX, oldStageY, oldScreenX, oldScreenY;
     int currentTab;// 1 Filed, 2 Player
+    int currentStatus;
     int statusEditing;
+    int playerNumber;
     final Node FolderIcon = new ImageView(new Image(getClass().getResourceAsStream("Folder.png")));
     final Node FileIcon = new ImageView(new Image(getClass().getResourceAsStream("file.png")));
     final Node CodeIcon = new ImageView(new Image(getClass().getResourceAsStream("Code.png")));
@@ -49,9 +58,10 @@ public class Controller implements Initializable {
     File nowDir;
     File projectInfo, strategy;
     FieldRect<Integer> FieldSize;
-    GraphicsContext fieldGraphicsContext;
-    FileUtil projectFileUtil;
-    FieldDrawer fieldDrawer;
+    GraphicsContext fieldGraphicsContext, gridGraphicsContext;
+    FileUtil projectFileUtil, strategyFileUtil;
+    FieldDrawer fieldDrawer, gridDrawer;
+    Position[] initPlayerPositions;
 
     // private Stage stage;
 
@@ -74,15 +84,15 @@ public class Controller implements Initializable {
     @FXML
     private TreeView<String> FileManager;
     @FXML
-    private Canvas FiledCanvas;
+    private Canvas FiledCanvas, GridCanvas;
     @FXML
     private TextField TeamName, TeamNum, hostAddr, port;
     @FXML
     private Button beforePlayButton, playOnButton;
     @FXML
-    private HBox statusBox;
-    @FXML
     private CheckBox showGrid;
+    @FXML
+    private ChoiceBox<String> statusSelector;
 
     @FXML
     private void closeWnd() {
@@ -111,7 +121,6 @@ public class Controller implements Initializable {
             Filed.setVisible(true);
             Player.setVisible(false);
             Project.setVisible(false);
-            statusBox.setVisible(true);
             currentTab = 1;
         }
     }
@@ -122,7 +131,6 @@ public class Controller implements Initializable {
             Filed.setVisible(false);
             Player.setVisible(true);
             Project.setVisible(false);
-            statusBox.setVisible(false);
             currentTab = 2;
         }
     }
@@ -141,7 +149,6 @@ public class Controller implements Initializable {
             Filed.setVisible(false);
             Player.setVisible(false);
             Project.setVisible(true);
-            statusBox.setVisible(false);
             currentTab = 3;
             // Analyzer a = new Analyzer(projectInfo);
             injectProjectInfo();
@@ -153,6 +160,7 @@ public class Controller implements Initializable {
             projectFileUtil.getProjectInfo();
             TeamName.setText(projectFileUtil.teamName);
             TeamNum.setText(String.valueOf(projectFileUtil.playerNumber));
+            playerNumber = projectFileUtil.playerNumber;
             hostAddr.setText(projectFileUtil.host);
             port.setText(String.valueOf(projectFileUtil.port));
         } else {
@@ -197,6 +205,8 @@ public class Controller implements Initializable {
         System.out.println(projectInfo);
         System.out.println(strategy);
         projectFileUtil = new FileUtil(projectInfo);
+        strategyFileUtil = new FileUtil(strategy);
+        injectProjectInfo();
     }
 
     private void showDirectory(File Dir, TreeItem<String> root) {
@@ -259,7 +269,16 @@ public class Controller implements Initializable {
 
     @FXML
     private void beforePlayEdit() {
-
+        if (isProject) {
+            fieldGraphicsContext = null;
+            strategyFileUtil.getStrategy();
+            for (int i = 1; i <= playerNumber; i++) {
+                int[] pos = strategyFileUtil.getStrategyBeamsPos(i);
+                System.out.println(Arrays.toString(pos));
+                fieldDrawer.drawRound(pos[0], pos[1], 8, Color.BLUE);
+                
+            }
+        }
     }
 
     @FXML
@@ -275,18 +294,24 @@ public class Controller implements Initializable {
     private void drawGrid(boolean b) {
 
         if (b) {
-            fieldDrawer.drawLine(-15, 10, -15, -10, Color.AQUA, 4);
-            fieldDrawer.drawLine(-15, 10, 15, 10, Color.AQUA, 4);
-            fieldDrawer.drawLine(15, 10, 15, -10, Color.AQUA, 4);
-            fieldDrawer.drawLine(-15, -10, 15, -10, Color.AQUA, 4);
+            gridDrawer.drawLine(-15, 10, -15, -10, Color.AQUA, 2);
+            gridDrawer.drawLine(-15, 10, 15, 10, Color.AQUA, 2);
+            gridDrawer.drawLine(15, 10, 15, -10, Color.AQUA, 2);
+            gridDrawer.drawLine(-15, -10, 15, -10, Color.AQUA, 2);
             for (int i = -14; i <= 14; i++) {
-                fieldDrawer.drawLine(i, 10, i, -10, Color.AQUA, 1);
+                if (i == 0) {
+                    gridDrawer.drawLine(i, 10, i, -10, Color.AQUA, 4);
+                }
+                gridDrawer.drawLine(i, 10, i, -10, Color.AQUA, 1);
             }
             for (int i = -9; i <= 9; i++) {
-                fieldDrawer.drawLine(-15, i, 15, i, Color.AQUA, 1);
+                if (i == 0) {
+                    gridDrawer.drawLine(-15, i, 15, i, Color.AQUA, 4);
+                }
+                gridDrawer.drawLine(-15, i, 15, i, Color.AQUA, 1);
             }
         } else {
-            fieldGraphicsContext.clearRect(0, 0, 1024, 704);
+            gridGraphicsContext.clearRect(0, 0, 1024, 704);
         }
     }
 
@@ -295,6 +320,7 @@ public class Controller implements Initializable {
 
         initWidgets();
         initCanvas();
+        initSelector();
         loadIcon();
         isOpenFolder = false;
         isProject = false;
@@ -309,9 +335,33 @@ public class Controller implements Initializable {
     // return stage;
     // }
 
+    private void initSelector() {
+        File status = new File("resources\\status.txt");
+        List<String> statusList = new ArrayList<>();
+        try {
+            statusList = Files.readAllLines(status.toPath());
+            for (String string : statusList) {
+                statusSelector.getItems().add(string);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        statusSelector.getSelectionModel().selectedIndexProperty()
+                .addListener((ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
+                    switch (new_val.intValue()) {
+                        case 0:
+                            beforePlayEdit();
+                        default:
+                            System.out.println("Seleted " + new_val);
+                    }
+                });
+    }
+
     private void initCanvas() {
         fieldGraphicsContext = FiledCanvas.getGraphicsContext2D();
-        fieldDrawer = new FieldDrawer();
+        gridGraphicsContext = GridCanvas.getGraphicsContext2D();
+        fieldDrawer = new FieldDrawer(fieldGraphicsContext);
+        gridDrawer = new FieldDrawer(gridGraphicsContext);
         // fieldGraphicsContext.setFill(Color.ALICEBLUE);
         // fieldGraphicsContext.fillRect(0, 0, 512, 512);
     }
@@ -359,9 +409,10 @@ public class Controller implements Initializable {
         FiledCanvas.setLayoutY(32 / sY);
         FiledCanvas.setWidth(FieldSize.getWidth());
         FiledCanvas.setHeight(FieldSize.getHeight());
-        statusBox.setLayoutX(264 / sX);
-        statusBox.setLayoutY(822 / sY);
-        statusBox.setPrefHeight(48 / sY);
+        GridCanvas.setLayoutX(24 / sX);
+        GridCanvas.setLayoutY(32 / sY);
+        GridCanvas.setWidth(FieldSize.getWidth());
+        GridCanvas.setHeight(FieldSize.getHeight());
     }
 
     private boolean checkCloseState() {
@@ -371,6 +422,11 @@ public class Controller implements Initializable {
     class FieldDrawer {
         Position oSize = new Position(1024, 704);
         Position tSize = new Position(32, 22);
+        GraphicsContext graphicsContext;
+
+        FieldDrawer(GraphicsContext gc) {
+            graphicsContext = gc;
+        }
 
         private Position transPosition(double x, double y) {
             double X = 0, Y = 0;
@@ -394,9 +450,16 @@ public class Controller implements Initializable {
             Position position2 = transPosition(x2, y2);
             Position nPosition1 = Positions.R2A(oSize, tSize, position1);
             Position nPosition2 = Positions.R2A(oSize, tSize, position2);
-            fieldGraphicsContext.setStroke(color);
-            fieldGraphicsContext.setLineWidth(width);
-            fieldGraphicsContext.strokeLine(nPosition1.x, nPosition1.y, nPosition2.x, nPosition2.y);
+            graphicsContext.setStroke(color);
+            graphicsContext.setLineWidth(width);
+            graphicsContext.strokeLine(nPosition1.x, nPosition1.y, nPosition2.x, nPosition2.y);
+        }
+
+        public void drawRound(double x, double y, double radius, Paint color) {
+            Position position = transPosition(x, y);
+            Position nPosition = Positions.R2A(oSize, tSize, position);
+            graphicsContext.setFill(color);
+            graphicsContext.fillOval(nPosition.x - radius, nPosition.y - radius, radius * 2, radius * 2);
         }
 
     }

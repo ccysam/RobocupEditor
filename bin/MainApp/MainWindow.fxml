@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
@@ -20,7 +21,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
@@ -35,8 +35,8 @@
       </Pane>
       <Pane fx:id="FtPane" prefHeight="900.0" prefWidth="2530.0" style="-fx-background-color: #FFFFFF00; -fx-border-radius: 12px; -fx-background-radius: 12px;">
          <children>
-            <Rectangle fx:id="titleBarDwn" fill="#66ccff" height="16.0" layoutY="17.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" style="-fx-fill: linear-gradient(rgba(102,204,255,255) 0%,rgba(51,153,204,255) 100%);" width="1600.0" />
-            <Rectangle fx:id="titleBarUp" arcHeight="24.0" arcWidth="24.0" fill="#66ccff" height="32.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" style="-fx-fill: linear-gradient(rgba(102,204,255,255) 0%,rgba(51,153,204,255) 100%);" width="1600.0" />
+            <Rectangle fx:id="titleBarDwn" fill="#66ccff" height="16.0" layoutY="17.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1600.0" />
+            <Rectangle fx:id="titleBarUp" arcHeight="24.0" arcWidth="24.0" fill="#66ccff" height="32.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1600.0" />
             <Button id="cBtn" fx:id="CloseBtn" cancelButton="true" layoutX="1572.0" layoutY="4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#closeWnd" prefHeight="24.0" prefWidth="24.0" style="-fx-background-radius: 12px;" text="X">
                <font>
                   <Font name="System Bold" size="11.0" />
@@ -116,6 +116,7 @@
                         <Image url="@../../Background.png" />
                      </image>
                   </ImageView>
+                  <Canvas fx:id="GridCanvas" height="200.0" width="200.0" />
                   <Canvas fx:id="FiledCanvas" height="704.0" layoutX="24.0" layoutY="32.0" width="1024.0" />
                </children>
             </Pane>
@@ -157,22 +158,24 @@
             <Button layoutX="264.0" layoutY="45.0" maxHeight="24.0" minHeight="24.0" mnemonicParsing="false" onAction="#TabFiled" prefHeight="16.0" styleClass="TabBtn" text="球场" />
             <Button layoutX="312.0" layoutY="45.0" maxHeight="24.0" minHeight="24.0" mnemonicParsing="false" onAction="#TabPlayer" prefHeight="16.0" styleClass="TabBtn" text="球员" />
             <Button layoutX="360.0" layoutY="45.0" maxHeight="24.0" minHeight="24.0" mnemonicParsing="false" onAction="#TabProject" prefHeight="16.0" styleClass="TabBtn" text="项目" />
-            <HBox fx:id="statusBox" alignment="CENTER" layoutX="264.0" layoutY="822.0" prefHeight="64.0" style="-fx-spacing: 4;">
-               <children>
-                  <Button fx:id="beforePlayButton" mnemonicParsing="false" prefHeight="56.0" prefWidth="72.0" styleClass="StatusBtn" text="Button" wrapText="true" />
-                  <Button fx:id="playOnButton" mnemonicParsing="false" prefHeight="56.0" prefWidth="72.0" styleClass="StatusBtn" text="Button" />
-               </children>
-            </HBox>
             <VBox layoutX="1362.0" layoutY="70.0" prefWidth="228.0" style="-fx-spacing: 8;">
                <children>
-                  <Label text="开球前" />
-                  <CheckBox fx:id="showGrid" mnemonicParsing="false" onAction="#GridDisplay" text="显示坐标网格" />
-                  <HBox alignment="CENTER_LEFT" style="-fx-padding: 4; -fx-spacing: 8; -fx-background-radius: 8; -fx-background-color: #66ccff;">
+                  <Label alignment="CENTER" prefWidth="228.0" text="编辑器" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets bottom="2.0" top="2.0" />
+                     </VBox.margin>
+                  </Label>
+                  <FlowPane>
                      <children>
-                        <RadioButton mnemonicParsing="false" />
-                        <RadioButton mnemonicParsing="false" />
+                        <Label text="当前状态：" />
+                        <ChoiceBox fx:id="statusSelector" prefWidth="150.0" style="-fx-background-color: linear-gradient(rgba(185, 231, 255, 255) 0%, rgba(102, 204, 255, 255) 60%); -fx-background-radius: 10;" />
                      </children>
-                  </HBox>
+                  </FlowPane>
+                  <CheckBox fx:id="showGrid" mnemonicParsing="false" onAction="#GridDisplay" text="显示坐标网格">
+                     <VBox.margin>
+                        <Insets bottom="2.0" top="2.0" />
+                     </VBox.margin>
+                  </CheckBox>
                </children>
             </VBox>
          </children>

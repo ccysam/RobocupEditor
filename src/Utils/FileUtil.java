@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import MainApp.FieldRect;
+
 public class FileUtil {
 
     private File file;
@@ -67,19 +69,40 @@ public class FileUtil {
         int nowLine;
         nowLine = 0;
         for (String string : content) {
-            if ("void NaoBehavior::beam( double& beamX, double& beamY, double& beamAngle ) {".equals(string)) {
-                beamBegin = nowLine;
+            if ("// BeamBegin".equals(string)) {
+                beamBegin = nowLine + 1;
             }
-            if ("}".equals(string)) {
-                beamEnd = nowLine;
+            if ("// BeamEnd".equals(string)) {
+                beamEnd = nowLine - 1;
             }
-            if ("SkillType NaoBehavior::selectSkill() {".equals(string)) {
-                selectSkillBegin = nowLine;
+            if ("// selectSkillBegin".equals(string)) {
+                selectSkillBegin = nowLine + 1;
             }
-            if ("}".equals(string)) {
-                selectSkillEnd = nowLine;
+            if ("// selectSkillEnd".equals(string)) {
+                selectSkillEnd = nowLine - 1;
             }
             nowLine++;
         }
+        System.out.println(content.get(beamBegin));
+        System.out.println(content.get(selectSkillBegin));
+        System.out.println(beamEnd + "  " + selectSkillEnd);
+    }
+
+    public int[] getStrategyBeamsPos(int playerID) {
+        int beginLine = beamBegin;
+        int endLine = beamEnd;
+        int x = 0, y = 0;
+        for (int nowLine = beginLine; nowLine <= endLine; nowLine++) {
+            if (content.get(nowLine).length() >= 32) {
+                if (("    if (worldModel->getUNum() == " + playerID + ")").equals(content.get(nowLine))) {
+                    x = Integer.parseInt(
+                            content.get(nowLine + 2).substring(16, content.get(nowLine + 2).length() - 1));
+                    y = Integer.parseInt(
+                            content.get(nowLine + 3).substring(16, content.get(nowLine + 3).length() - 1));
+                }
+            }
+        }
+        int[] pos = { x, y };
+        return pos;
     }
 }
