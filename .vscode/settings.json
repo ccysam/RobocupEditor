@@ -19,7 +19,8 @@
         "c:\\Users\\chswxh\\Documents\\javafx-sdk-17.0.2\\lib\\javafx.swing.jar",
         "c:\\Users\\chswxh\\Documents\\javafx-sdk-17.0.2\\lib\\javafx.web.jar",
         "c:\\Users\\chswxh\\Documents\\javafx-sdk-17.0.2\\lib\\javafx-swt.jar",
-        "e:\\Documents\\Source Code\\Java\\gson-2.9.0.jar"
+        "e:\\Documents\\Source Code\\Java\\gson-2.9.0.jar",
+        "e:\\Download\\richtextfx-fat-0.10.9.jar"
     ],
     "cSpell.words": [
         "Initializable",

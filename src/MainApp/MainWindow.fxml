@@ -120,7 +120,7 @@
                   <Canvas fx:id="FiledCanvas" height="704.0" layoutX="24.0" layoutY="32.0" width="1024.0" />
                </children>
             </Pane>
-            <Pane fx:id="Player" layoutX="1600.0" layoutY="120.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: #AAAAAA; -fx-border-width: 2;" />
+            <Pane fx:id="Player" layoutX="1600.0" layoutY="120.0" prefHeight="200.0" prefWidth="200.0" />
             <Pane fx:id="Project" layoutX="1600.0" layoutY="6.0">
                <children>
                   <VBox>
@@ -178,6 +178,7 @@
                   </CheckBox>
                </children>
             </VBox>
+            <Pane fx:id="Console" layoutX="264.0" layoutY="822.0" prefHeight="64.0" prefWidth="1088.0" style="-fx-border-color: #66ccff; -fx-border-radius: 4;" />
          </children>
       </Pane>
    </children>

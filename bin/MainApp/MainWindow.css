@@ -57,3 +57,42 @@ Pane VBox .Tools {
     -fx-background-color: #44aadd;
     -fx-background-radius: 4;
 }
+
+Pane TextArea {
+    -fx-background-radius: 4;
+
+    -fx-border-radius: 4;
+    -fx-border-color: #66ccff;
+}
+
+Pane #console .content {
+    -fx-background-color: #44aadd00;
+    -fx-background-radius: 4;
+}
+
+Pane #console .scroll-pane {
+    -fx-vbar-policy: always;
+}
+
+Pane #console {
+    -fx-border-color: #66ccff;
+    -fx-border-radius: 8;
+}
+
+.roleText {
+    -fx-fill: #66ccff;
+    -fx-font-weight: bold;
+}
+
+.contentText {
+    -fx-fill: #000000;
+}
+
+.errorRoleText {
+    -fx-fill: #FFCC66;
+    -fx-font-weight: bold;
+}
+
+.errorText {
+    -fx-fill: #ee3333;
+}

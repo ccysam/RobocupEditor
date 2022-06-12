@@ -6,14 +6,17 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.StyleClassedTextArea;
+import org.fxmisc.richtext.StyledTextArea;
 
 import Utils.FileUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -62,6 +65,8 @@ public class Controller implements Initializable {
     FileUtil projectFileUtil, strategyFileUtil;
     FieldDrawer fieldDrawer, gridDrawer;
     Position[] initPlayerPositions;
+    VirtualizedScrollPane<StyleClassedTextArea> consoleScrollPane;
+    StyleClassedTextArea consoleArea = new StyleClassedTextArea();
 
     // private Stage stage;
 
@@ -93,6 +98,8 @@ public class Controller implements Initializable {
     private CheckBox showGrid;
     @FXML
     private ChoiceBox<String> statusSelector;
+    @FXML
+    private Pane Console;
 
     @FXML
     private void closeWnd() {
@@ -155,6 +162,18 @@ public class Controller implements Initializable {
         }
     }
 
+    private void consoleOut(String role, String content) {
+        consoleArea.append("[" + role + "]: ", "roleText");
+        consoleArea.append(content + "\n", "contentText");    
+        consoleArea.requestFollowCaret();
+    }
+
+    private void consoleError(String role, String content) {
+        consoleArea.append("[ERROR/" + role + "]: ", "errorRoleText");
+        consoleArea.append(content + "\n", "errorText");
+        consoleArea.requestFollowCaret();
+    }
+
     private void injectProjectInfo() {
         if (projectFileUtil != null) {
             projectFileUtil.getProjectInfo();
@@ -202,8 +221,10 @@ public class Controller implements Initializable {
     }
 
     private void loadProject() {
-        System.out.println(projectInfo);
-        System.out.println(strategy);
+        // System.out.println(projectInfo);
+        consoleOut("ProjectLoader", projectInfo.toString());
+        // System.out.println(strategy);
+        consoleOut("ProjectLoader", strategy.toString());
         projectFileUtil = new FileUtil(projectInfo);
         strategyFileUtil = new FileUtil(strategy);
         injectProjectInfo();
@@ -259,6 +280,7 @@ public class Controller implements Initializable {
                         Long.parseLong(port.getText()));
                 new Alert(AlertType.INFORMATION, "工程信息已修改").show();
             } else {
+                consoleError("projectFileUtil", "Invalid value input!");
                 Alert alert = new Alert(AlertType.WARNING);
                 alert.setTitle("球员人数错误！");
                 alert.setContentText("球员数量请设置在0~11人之间。:-)");
@@ -274,9 +296,10 @@ public class Controller implements Initializable {
             strategyFileUtil.getStrategy();
             for (int i = 1; i <= playerNumber; i++) {
                 int[] pos = strategyFileUtil.getStrategyBeamsPos(i);
-                System.out.println(Arrays.toString(pos));
+                // System.out.println(Arrays.toString(pos));
+                consoleOut("strategyFileUtil", Arrays.toString(pos));
                 fieldDrawer.drawRound(pos[0], pos[1], 8, Color.BLUE);
-                
+
             }
         }
     }
@@ -321,6 +344,7 @@ public class Controller implements Initializable {
         initWidgets();
         initCanvas();
         initSelector();
+        initConsole();
         loadIcon();
         isOpenFolder = false;
         isProject = false;
@@ -334,6 +358,16 @@ public class Controller implements Initializable {
     // }
     // return stage;
     // }
+
+    private void initConsole() {
+        consoleArea.setId("console");
+        consoleArea.setEditable(false);
+        consoleArea.setWrapText(true);
+        consoleArea.setAutoScrollOnDragDesired(true);
+        consoleScrollPane = new VirtualizedScrollPane<StyleClassedTextArea>(consoleArea);
+        Console.getChildren().add(consoleScrollPane);
+        consoleOut("Console", "Console initialized successfully!");
+    }
 
     private void initSelector() {
         File status = new File("resources\\status.txt");
@@ -351,10 +385,23 @@ public class Controller implements Initializable {
                     switch (new_val.intValue()) {
                         case 0:
                             beforePlayEdit();
+                            canvasCursor(0);
+                            currentStatus = 0;
+                            break;
                         default:
-                            System.out.println("Seleted " + new_val);
+                            // System.out.println("Seleted " + new_val);
+                            consoleOut("Selector", "unused selector " + new_val + " has been selected");
                     }
                 });
+    }
+
+    private void canvasCursor(int i) {
+        switch (i) {
+            case 0:
+                break;
+            default:
+                break;
+        }
     }
 
     private void initCanvas() {
@@ -388,7 +435,7 @@ public class Controller implements Initializable {
         titleText.setLayoutX((1600 * 0.5 / sX) - 64);
         CloseBtn.setLayoutX((1600 - 28) / sX);
         leftAccordion.setPrefWidth(240 / sX);
-        leftAccordion.setPrefHeight(825 / sY);
+        leftAccordion.setPrefHeight(840 / sY);
         Filed.setPrefWidth(FieldSize.getWidth());
         Filed.setPrefHeight(FieldSize.getHeight());
         Filed.setLayoutX(FieldSize.getX());
@@ -413,6 +460,12 @@ public class Controller implements Initializable {
         GridCanvas.setLayoutY(32 / sY);
         GridCanvas.setWidth(FieldSize.getWidth());
         GridCanvas.setHeight(FieldSize.getHeight());
+        Console.setPrefWidth(1088 / sX);
+        Console.setPrefHeight(64 / sY);
+        Console.setLayoutX(264 / sX);
+        Console.setLayoutY(822 / sY);
+        consoleArea.setPrefWidth(1088 / sX);
+        consoleArea.setPrefHeight(64 / sY);
     }
 
     private boolean checkCloseState() {
