@@ -89,10 +89,19 @@ Pane #console {
 }
 
 .errorRoleText {
-    -fx-fill: #FFCC66;
+    -fx-fill: #FF7777;
     -fx-font-weight: bold;
 }
 
 .errorText {
     -fx-fill: #ee3333;
+}
+
+.warnRoleText {
+    -fx-fill: #FFEE77;
+    -fx-font-weight: bold;
+}
+
+.warnText {
+    -fx-fill: #FFCC66;
 }

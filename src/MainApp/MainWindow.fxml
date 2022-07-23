@@ -99,7 +99,7 @@
                   </TitledPane>
                   <TitledPane id="Player" text="球员管理">
                      <content>
-                        <TreeView />
+                        <TreeView fx:id="PlayerManger" />
                      </content>
                   </TitledPane>
                   <TitledPane id="Method" style="-fx-background-radius: 8; -fx-border-radius: 8;" text="策略管理">
@@ -167,7 +167,7 @@
                   </Label>
                   <FlowPane>
                      <children>
-                        <Label text="当前状态：" />
+                        <Label fx:id="StatusLable" text="当前状态：" />
                         <ChoiceBox fx:id="statusSelector" prefWidth="150.0" style="-fx-background-color: linear-gradient(rgba(185, 231, 255, 255) 0%, rgba(102, 204, 255, 255) 60%); -fx-background-radius: 10;" />
                      </children>
                   </FlowPane>
@@ -176,6 +176,7 @@
                         <Insets bottom="2.0" top="2.0" />
                      </VBox.margin>
                   </CheckBox>
+                  <CheckBox fx:id="autoAlign" mnemonicParsing="false" text="自动吸附网格" />
                </children>
             </VBox>
             <Pane fx:id="Console" layoutX="264.0" layoutY="822.0" prefHeight="64.0" prefWidth="1088.0" style="-fx-border-color: #66ccff; -fx-border-radius: 4;" />

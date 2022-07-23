@@ -83,9 +83,9 @@ public class FileUtil {
             }
             nowLine++;
         }
-        System.out.println(content.get(beamBegin));
-        System.out.println(content.get(selectSkillBegin));
-        System.out.println(beamEnd + "  " + selectSkillEnd);
+        // System.out.println(content.get(beamBegin));
+        // System.out.println(content.get(selectSkillBegin));
+        // System.out.println(beamEnd + " " + selectSkillEnd);
     }
 
     public int[] getStrategyBeamsPos(int playerID) {
@@ -105,4 +105,9 @@ public class FileUtil {
         int[] pos = { x, y };
         return pos;
     }
+
+    public void setStrategyBeamsPos(int playerID, int x, int y) {
+
+    }
+
 }

@@ -3,6 +3,7 @@ package MainApp;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.channels.Selector;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,8 +18,10 @@ import org.fxmisc.richtext.StyledTextArea;
 import Utils.FileUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -28,6 +31,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.TextField;
@@ -36,9 +40,11 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.robot.Robot;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Screen;
@@ -52,6 +58,7 @@ public class Controller implements Initializable {
     int currentStatus;
     int statusEditing;
     int playerNumber;
+    int chosenPlayer;
     final Node FolderIcon = new ImageView(new Image(getClass().getResourceAsStream("Folder.png")));
     final Node FileIcon = new ImageView(new Image(getClass().getResourceAsStream("file.png")));
     final Node CodeIcon = new ImageView(new Image(getClass().getResourceAsStream("Code.png")));
@@ -87,7 +94,7 @@ public class Controller implements Initializable {
     @FXML
     private ImageView FiledImage;
     @FXML
-    private TreeView<String> FileManager;
+    private TreeView<String> FileManager, PlayerManger;
     @FXML
     private Canvas FiledCanvas, GridCanvas;
     @FXML
@@ -95,11 +102,13 @@ public class Controller implements Initializable {
     @FXML
     private Button beforePlayButton, playOnButton;
     @FXML
-    private CheckBox showGrid;
+    private CheckBox showGrid, autoAlign;
     @FXML
     private ChoiceBox<String> statusSelector;
     @FXML
     private Pane Console;
+    @FXML
+    private Label StatusLable;
 
     @FXML
     private void closeWnd() {
@@ -163,14 +172,20 @@ public class Controller implements Initializable {
     }
 
     private void consoleOut(String role, String content) {
-        consoleArea.append("[" + role + "]: ", "roleText");
-        consoleArea.append(content + "\n", "contentText");    
+        consoleArea.append("[" + role + "/INFO]: ", "roleText");
+        consoleArea.append(content + "\n", "contentText");
         consoleArea.requestFollowCaret();
     }
 
     private void consoleError(String role, String content) {
-        consoleArea.append("[ERROR/" + role + "]: ", "errorRoleText");
+        consoleArea.append("[" + role + "/ERROR]: ", "errorRoleText");
         consoleArea.append(content + "\n", "errorText");
+        consoleArea.requestFollowCaret();
+    }
+
+    private void consoleWarn(String role, String content) {
+        consoleArea.append("[" + role + "/WARN]: ", "warnRoleText");
+        consoleArea.append(content + "\n", "warnText");
         consoleArea.requestFollowCaret();
     }
 
@@ -182,11 +197,26 @@ public class Controller implements Initializable {
             playerNumber = projectFileUtil.playerNumber;
             hostAddr.setText(projectFileUtil.host);
             port.setText(String.valueOf(projectFileUtil.port));
+            loadPlayerData();
         } else {
             TeamName.setText("");
             TeamNum.setText(String.valueOf(""));
             hostAddr.setText("");
             port.setText("");
+        }
+    }
+
+    private void loadPlayerData() {
+        if (projectFileUtil != null) {
+            projectFileUtil.getProjectInfo();
+            TreeItem<String> PlayerData = new TreeItem<>(projectFileUtil.teamName);
+            int c = projectFileUtil.playerNumber;
+            for (int i = 1; i <= c; i++) {
+                TreeItem<String> Player = new TreeItem<>(String.valueOf(i));
+                PlayerData.getChildren().add(Player);
+            }
+            PlayerManger.setRoot(PlayerData);
+            
         }
     }
 
@@ -299,7 +329,6 @@ public class Controller implements Initializable {
                 // System.out.println(Arrays.toString(pos));
                 consoleOut("strategyFileUtil", Arrays.toString(pos));
                 fieldDrawer.drawRound(pos[0], pos[1], 8, Color.BLUE);
-
             }
         }
     }
@@ -340,7 +369,8 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-
+        long initSTime, initTTime;
+        initSTime = System.currentTimeMillis();
         initWidgets();
         initCanvas();
         initSelector();
@@ -349,6 +379,9 @@ public class Controller implements Initializable {
         isOpenFolder = false;
         isProject = false;
         currentTab = 1;
+        initTTime = System.currentTimeMillis() - initSTime;
+        consoleOut("Console", "Done in " + initTTime + "ms!");
+        consoleOut("Robocup Editor", "Welcome to Robocup 3D Soccer Simulator graphic strategy and action editor!");
         // var stage = getStage();
     }
 
@@ -382,24 +415,32 @@ public class Controller implements Initializable {
         }
         statusSelector.getSelectionModel().selectedIndexProperty()
                 .addListener((ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-                    switch (new_val.intValue()) {
-                        case 0:
-                            beforePlayEdit();
-                            canvasCursor(0);
-                            currentStatus = 0;
-                            break;
-                        default:
-                            // System.out.println("Seleted " + new_val);
-                            consoleOut("Selector", "unused selector " + new_val + " has been selected");
-                    }
+                    SelectorEvents(new_val.intValue());
                 });
+        consoleOut("Widgets", "Selector initialized successfully!");
+    }
+
+    private void SelectorEvents(int selection) {
+        consoleOut("Selector", "Selector " + selection + " has been selected.");
+        switch (selection) {
+            case 0:
+                beforePlayEdit();
+                canvasCursor(0);
+                currentStatus = 0;
+                break;
+            default:
+                fieldDrawer.clearAll();
+                consoleWarn("Selector", "The action of this selector has not been defined!");
+        }
     }
 
     private void canvasCursor(int i) {
         switch (i) {
             case 0:
+                FiledCanvas.setCursor(Cursor.DEFAULT);
                 break;
             default:
+                FiledCanvas.setCursor(Cursor.DEFAULT);
                 break;
         }
     }
@@ -411,10 +452,11 @@ public class Controller implements Initializable {
         gridDrawer = new FieldDrawer(gridGraphicsContext);
         // fieldGraphicsContext.setFill(Color.ALICEBLUE);
         // fieldGraphicsContext.fillRect(0, 0, 512, 512);
+        consoleOut("Canvas", "Canvas initialized successfully!");
     }
 
     private void loadIcon() {
-
+        consoleWarn("Widgets", "No icon image has been defined!");
     }
 
     private void initWidgets() {
@@ -425,17 +467,17 @@ public class Controller implements Initializable {
         FieldSize.setY((int) (70 / sY));
 
         MainPane.setPrefWidth(1600 / sX);
-        MainPane.setPrefHeight(900 / sY);
+        MainPane.setPrefHeight(964 / sY);
         BkPane.setPrefWidth(1600 / sX);
-        BkPane.setPrefHeight(900 / sY);
+        BkPane.setPrefHeight(964 / sY);
         FtPane.setPrefWidth(1600 / sX);
-        FtPane.setPrefHeight(900 / sY);
+        FtPane.setPrefHeight(964 / sY);
         titleBarUp.setWidth(1600 / sX);
         titleBarDwn.setWidth(1600 / sX);
         titleText.setLayoutX((1600 * 0.5 / sX) - 64);
         CloseBtn.setLayoutX((1600 - 28) / sX);
         leftAccordion.setPrefWidth(240 / sX);
-        leftAccordion.setPrefHeight(840 / sY);
+        leftAccordion.setPrefHeight(904 / sY);
         Filed.setPrefWidth(FieldSize.getWidth());
         Filed.setPrefHeight(FieldSize.getHeight());
         Filed.setLayoutX(FieldSize.getX());
@@ -461,11 +503,13 @@ public class Controller implements Initializable {
         GridCanvas.setWidth(FieldSize.getWidth());
         GridCanvas.setHeight(FieldSize.getHeight());
         Console.setPrefWidth(1088 / sX);
-        Console.setPrefHeight(64 / sY);
+        Console.setPrefHeight(128 / sY);
         Console.setLayoutX(264 / sX);
         Console.setLayoutY(822 / sY);
         consoleArea.setPrefWidth(1088 / sX);
-        consoleArea.setPrefHeight(64 / sY);
+        consoleArea.setPrefHeight(128 / sY);
+
+        consoleOut("Widgets", "Widgets initialized successfully!");
     }
 
     private boolean checkCloseState() {
@@ -515,6 +559,17 @@ public class Controller implements Initializable {
             graphicsContext.fillOval(nPosition.x - radius, nPosition.y - radius, radius * 2, radius * 2);
         }
 
+        public void drawFocus(double x, double y, double radius, Paint color) {
+            Position position = transPosition(x, y);
+            Position nPosition = Positions.R2A(oSize, tSize, position);
+            graphicsContext.setFill(color);
+            graphicsContext.strokeRect(nPosition.x - radius + 2, nPosition.y - radius + 2, radius * 2 + 2,
+                    radius * 2 + 2);
+        }
+
+        public void clearAll() {
+            graphicsContext.clearRect(0, 0, oSize.x, oSize.y);
+        }
     }
 
 }
